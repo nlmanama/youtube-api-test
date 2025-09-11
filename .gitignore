@@ -1,3 +1,6 @@
 .env
 
 youtube_test
+
+__pycache__/
+*.pyc
