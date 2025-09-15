@@ -113,9 +113,8 @@ def _(response):
     like_count = []
 
     for video in response["items"]:
-        view_count.append(video["statistics"]["viewCount"])
-        like_count.append(video["statistics"]["likeCount"])
-
+        view_count.append(int(video["statistics"]["viewCount"]))
+        like_count.append(int(video["statistics"]["likeCount"]))
     return like_count, view_count
 
 
@@ -127,16 +126,9 @@ def _(like_count, plt, view_count):
 
     ax.scatter(view_count, like_count, alpha=0.6)
 
-    # Slightly hacky solution to make the x-axis cleaner
-    # Found here: https://stackoverflow.com/questions/54783160/x-axis-tick-labels-are-too-dense-when-drawing-plots
-    ax.set_xticks(ax.get_xticks()[::3])
-
-
     ax.set_xlabel("View Count")
     ax.set_ylabel("Like Count")
     ax.set_title("Scatter Plot of View Count to Like Count")
-
-
     return
 
 
