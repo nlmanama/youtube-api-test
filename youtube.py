@@ -1,6 +1,15 @@
+# /// script
+# requires-python = ">=3.13"
+# dependencies = [
+#     "google-api-python-client==2.181.0",
+#     "matplotlib==3.10.6",
+#     "python-dotenv==1.1.1",
+# ]
+# ///
+
 import marimo
 
-__generated_with = "0.15.2"
+__generated_with = "0.15.5"
 app = marimo.App(width="medium")
 
 
