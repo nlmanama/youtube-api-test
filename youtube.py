@@ -23,38 +23,24 @@ def _(mo):
 def _():
     import marimo as mo
     import matplotlib.pyplot as plt
-    return mo, plt
 
-
-@app.cell
-def _():
     # To access API_KEY
     # Code taken from https://www.geeksforgeeks.org/python/how-to-create-and-use-env-files-in-python/
-
     import os
-    from dotenv import load_dotenv, dotenv_values 
-    load_dotenv() 
-    return (os,)
+
+    # Next three cells are code modified from the Google Developer Guide
+    # https://developers.google.com/youtube/v3/docs/videos/list
+    import googleapiclient.discovery
+    import googleapiclient.errors
+    return googleapiclient, mo, os, plt
 
 
 @app.cell
 def _(os):
-    # Next three cells are code taken from the Google Developer Guide and modified
-    # https://developers.google.com/youtube/v3/docs/videos/list
-    # -*- coding: utf-8 -*-
-
-    # Sample Python code for youtube.videos.list
-    # See instructions for running these code samples locally:
-    # https://developers.google.com/explorer-help/code-samples#python
-    import googleapiclient.discovery
-    import googleapiclient.errors
-
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-
-    # The line above is taken straight from the Google Developer Guide and I don't really understand the consequences of this right now so I will not touch it
-    return (googleapiclient,)
+    return
 
 
 @app.cell(hide_code=True)
