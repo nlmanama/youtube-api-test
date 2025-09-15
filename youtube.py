@@ -15,7 +15,7 @@ app = marimo.App(width="medium")
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""Youtube API Project""")
+    mo.md(r"""# YouTube API Project""")
     return
 
 
