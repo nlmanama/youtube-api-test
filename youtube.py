@@ -57,16 +57,40 @@ def _(os):
     return (googleapiclient,)
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - Create a Google Developer account on [Google Developer Console](https://console.cloud.google.com)
+    - Create a project called `cpsc-203`
+    - Go to [API Library – APIs & Services](https://console.cloud.google.com/apis/library), search for `youtube data api v3` and select *YouTube Data API v3*
+    - Click on *Create credentials* in the top right
+    - In the create credentials screen, choose the *Public data* radio button and click on *Next*.
+    - Copy the API key and treat it like a password by saving it in save place (for example, a password manager)
+    - In your project directory, create a `.env` file and add the following line:
+
+      ```
+      API_KEY=<your-youtube-api-key>
+      ```
+
+    - Save and close the file.
+    """
+    )
+    return
+
+
 @app.cell
 def _(googleapiclient, os):
-    # Setting up API
+    # Setting up API using `API_KEY` in `.env`
+    # load_dotenv()
 
     API_SERVICE_NAME = "youtube"
     API_VERSION = "v3"
 
     # Get credentials and create an API client
     youtube = googleapiclient.discovery.build(
-        API_SERVICE_NAME, API_VERSION, developerKey=os.getenv("API_KEY"))
+        API_SERVICE_NAME, API_VERSION, developerKey=os.getenv("API_KEY")
+    )
     return (youtube,)
 
 
