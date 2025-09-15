@@ -99,12 +99,22 @@ def _(youtube):
     # Making the request for the 20 most viral videos
 
     request = youtube.videos().list(
-        part="statistics",
-        chart="mostPopular",
-        maxResults = 20
+        part="statistics", chart="mostPopular", maxResults=20
     )
     response = request.execute()
     return (response,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""Explore the structure of our `response`.""")
+    return
+
+
+@app.cell
+def _(mo, response):
+    mo.inspect(response)
+    return
 
 
 @app.cell
