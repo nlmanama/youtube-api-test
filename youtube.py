@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.15.2"
+__generated_with = "0.16.5"
 app = marimo.App(width="medium")
 
 
@@ -24,7 +24,7 @@ def _():
 
     import os
     from dotenv import load_dotenv, dotenv_values 
-    load_dotenv() 
+    load_dotenv(dotenv_path='.env')
     return (os,)
 
 
@@ -86,7 +86,6 @@ def _(response):
     for video in response["items"]:
         view_count.append(video["statistics"]["viewCount"])
         like_count.append(video["statistics"]["likeCount"])
-
     return like_count, view_count
 
 
@@ -106,8 +105,11 @@ def _(like_count, plt, view_count):
     ax.set_xlabel("View Count")
     ax.set_ylabel("Like Count")
     ax.set_title("Scatter Plot of View Count to Like Count")
+    return
 
 
+@app.cell
+def _():
     return
 
 
