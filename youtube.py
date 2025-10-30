@@ -12,6 +12,8 @@ with app.setup:
     import dotenv
     import googleapiclient.discovery
     import googleapiclient.errors
+    import pandas as pd
+    import isodate
 
     # To access API_KEY
     # Code taken from https://www.geeksforgeeks.org/python/how-to-create-and-use-env-files-in-python/
@@ -47,17 +49,28 @@ def _():
     return
 
 
-@app.cell
-def _():
-    # Making the request for the 20 most viral videos
-
+@app.function
+def request_videos(part, chart, amount):
     request = youtube.videos().list(
-        part="statistics",
-        chart="mostPopular",
-        maxResults = 20
+        part=part,
+        chart=chart,
+        maxResults = amount
     )
     response = request.execute()
-    return (response,)
+    return response
+
+
+@app.cell
+def _():
+    # Making the request for the statistics of 20 most viral videos
+    # Contains things like viewCount, likeCount etc
+    statistics_response = request_videos("statistics", "mostPopular", 20)
+
+    # Making the request for the contentDetails of 20 most viral videos
+    # Contains things like video length
+    content_response = request_videos("contentDetails", "mostPopular", 20)
+    # Resopnse object to be passed into functions to use
+    return content_response, statistics_response
 
 
 @app.function
@@ -95,13 +108,13 @@ def save_graph(videos, axis, graph_name):
 
 
 @app.cell
-def _(response):
-    save_graph(response["items"], "likeCount", "like_scatter_plot.png")
+def _(statistics_response):
+    save_graph(statistics_response["items"], "likeCount", "like_scatter_plot.png")
     return
 
 
 @app.function
-def get_video_dislikes(r, n):
+def get_video_dislikes(response, r, n):
     """
     Return the n most disliked videos from the 30 most popular videos.
 
@@ -114,12 +127,6 @@ def get_video_dislikes(r, n):
     """
 
     videos = []
-    request = youtube.videos().list(
-        part="statistics",
-        chart="mostPopular",
-        maxResults = 30
-    )
-    response = request.execute()
 
     for v in response["items"]:
         stats = v["statistics"]
@@ -141,9 +148,41 @@ def get_video_dislikes(r, n):
 
 
 @app.cell
-def _():
-    save_graph(get_video_dislikes(0.86, 30), "dislikeCount", "dislike_scatter_plot_1.png")
-    save_graph(get_video_dislikes(0.5, 15), "dislikeCount", "dislike_scatter_plot_2.png")
+def _(statistics_response):
+    save_graph(get_video_dislikes(statistics_response, 0.86, 30), "dislikeCount", "dislike_scatter_plot_1.png")
+    save_graph(get_video_dislikes(statistics_response, 0.5, 15), "dislikeCount", "dislike_scatter_plot_2.png")
+    return
+
+
+@app.function
+def video_length_historgram(response):
+    # Extract video durations
+    durations = []
+    for item in response["items"]:
+        durations.append(item["contentDetails"]["duration"])
+    
+    # Convert ISO 8601 durations to seconds
+    seconds = []
+    for duration in durations:
+        total_seconds = isodate.parse_duration(duration).total_seconds()
+        seconds.append(total_seconds)
+    
+    # Create a DataFrame for easier handling
+    df = pd.DataFrame(seconds, columns=["Video Length (seconds)"])
+    
+    # Plot histogram
+    plt.figure(figsize=(8, 5))
+    plt.hist(df["Video Length (seconds)"], bins=10, edgecolor="black")
+    plt.title("Distribution of YouTube Video Lengths")
+    plt.xlabel("Length (seconds)")
+    plt.ylabel("Number of Videos")
+    plt.grid(True, alpha=0.3)
+    plt.show()
+
+
+@app.cell
+def _(content_response):
+    video_length_historgram(content_response)
     return
 
 
